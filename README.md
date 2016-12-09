@@ -1,5 +1,5 @@
 # wtf-blog
-https://frankfang-test.github.io/wtf-blog/
+https://batman-1.github.io/wtf-blog/
 
 ###如何写博客
 
