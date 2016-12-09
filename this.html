@@ -1,0 +1,142 @@
+<title>文章标题</title>
+<meta name="description" content="文章描述，150字以内">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<img class="logo" src="logo.png">
+
+<x-markdown>
+#问答
+###apply、call 有什么作用，什么区别?
+- 两者都是传入一个对象作为函数执行时的上下文环境，也就是改变this的指向，如果第一个参数是null或者underfind，那this就是默认指向全局对象对象，在浏览器中就是window对象。
+- 两者基本一样，第一个参数都是一样的，后面的参数有细微区别如下
+    - call 后面可以接受多个参数来作为函数执行时所需要的参数
+    - apply 接受2个参数，第二个参数必须是数组或者类数组对象 
+
+#代码
+1.以下代码输出什么?
+```
+var john = {
+    firstName: "John"
+}
+function func() {
+    alert(this.firstName + ": hi!")
+}
+john.sayHi = func
+john.sayHi()
+```
+- 输出`john:hi` 将func绑定在john的sayHi属性上，当执行的时候this就变成了john
+
+2.下面代码输出什么，为什么
+```
+func() 
+
+function func() { 
+  alert(this) 
+}
+```
+- 这段代码在全局作用域下执行，`输出this就是window`
+
+3.下面代码输出什么
+```
+function fn0(){
+    function fn(){
+        console.log(this);
+    }
+    fn();
+}
+
+fn0();//`输出this是`window`,虽然在函数内执行，但执行的对象还是window
+
+
+document.addEventListener('click', function(e){
+    console.log(this);//输出的this是document对象
+    setTimeout(function(){
+        console.log(this);//输出this是window对象,执行环境依然是在window下
+    }, 200);
+}, false);
+
+```
+4.下面代码输出什么，why
+```
+var john = { 
+  firstName: "John" 
+}
+
+function func() { 
+  alert( this.firstName )
+}
+func.call(john) 
+```
+- 这段代码输出的是`john`，函数func调用call方法执行的时候，传入john作为作为新的this指向，所以firstName就会在john对象身上寻找
+
+5.代码输出？
+```
+var john = { 
+  firstName: "John",
+  surname: "Smith"
+}
+
+function func(a, b) { 
+  alert( this[a] + ' ' + this[b] )//输出John + Smith
+}
+func.call(john, 'firstName', 'surname') 
+```
+
+以下代码有什么问题，如何修改
+```
+var module= {
+  bind: function(){
+    $btn.on('click', function(){
+      console.log(this) //this值的是被点击的$btn
+      this.showMsg();
+    })
+  },
+  
+  showMsg: function(){
+    console.log('饥人谷');
+  }
+}
+```
+- 这段代码会报错，当$btn被点击的时候，this就是$btn它自身,它自身肯定是没有showMsg方法。要想达到预想效果得把开始开始执行绑定事件时候的this保存起来，如下
+```
+var module= {
+  bind: function(){
+    var _this = this;
+    $btn.on('click', function(){
+      console.log(this) //this值的是被点击的$btn
+      _this.showMsg();
+    })
+  },
+  
+  showMsg: function(){
+    console.log('饥人谷');
+  }
+}
+```
+- 下面代码输出什么?
+```
+var length = 3;
+function fa() {
+  console.log(this.length);
+}
+var obj = {
+  length: 2,
+  doSome: function (fn) {
+    fn();
+    arguments[0]();
+  }
+}
+obj.doSome(fa)
+```
+- 当执行obj.doSome(fa)时，`fn()`就变成`fa()`输出的是`3`,因为函数的fa执行环境是window全局环境下，而`var length = 3`，其实可以变形为`window.length = 3`,所以这时打印的`this.length为3`
+- 而`arguments[0]();`执行的时候也是调用`fa()`，但调用的对象却不同，详细解释如下
+
+    - `arguments`是一个类数组对象
+    - `arguments[fa,null,null]`,所以作为一个类数组对象，这才是他的本来面目
+        - 里面的参数可以看做是这个arguments的属性
+    - `arguments[0]();` 所以这个调用我们可以变形为`arguments.fa()`(这样调用估计是不行，但是思路一定是这样)，我们对`this`的理解就是谁调用， `this`就是谁，这样变形之后`this`变的一目了然，`arguments`就是个类数组，现在它只有一个参数，其余都为空，那么它的长度只能是为1;
+
+</x-markdown>
+
+<link rel="stylesheet" href="css/default.css">
+<script src="js/marked.min.js"></script>
+<script src="js/main.js"></script>
