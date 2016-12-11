@@ -1,17 +1,22 @@
-<title>文章标题</title>
+<title>this是什么</title>
 <meta name="description" content="文章描述，150字以内">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    body{
+        background:#eee;
+    }
+</style>
 <img class="logo" src="logo.png">
 
 <x-markdown>
-#问答
-###apply、call 有什么作用，什么区别?
+# 问答
+### apply、call 有什么作用，什么区别?
 - 两者都是传入一个对象作为函数执行时的上下文环境，也就是改变this的指向，如果第一个参数是null或者underfind，那this就是默认指向全局对象对象，在浏览器中就是window对象。
 - 两者基本一样，第一个参数都是一样的，后面的参数有细微区别如下
     - call 后面可以接受多个参数来作为函数执行时所需要的参数
     - apply 接受2个参数，第二个参数必须是数组或者类数组对象 
 
-#代码
+# 代码
 1.以下代码输出什么?
 ```
 var john = {
